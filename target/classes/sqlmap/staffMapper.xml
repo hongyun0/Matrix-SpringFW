@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="staffMapper">
+	<select id="getWorkParts" resultType="String" parameterType="int">
+		select distinct work_part 
+		from staffs 
+		where branch_seq=#{branchSeq} 
+		and join_date is not null 
+		and leave_date is null
+		order by work_part desc
+	</select>
+	<select id="getWorkingStaffs" resultType="java.util.Map" parameterType="int">
+		select s.staff_id, u.gender, u.name, u.profile_photo, to_char(u.birth, 'YYYY/MM/DD') as birth, s.work_part
+		from staffs s, users u 
+		where s.staff_id=u.user_id 
+		and branch_seq=#{branchSeq} 
+		and join_date is not null 
+		and leave_date is null
+	</select>
+	<select id="getPreStaffs" resultType="java.util.Map" parameterType="int">
+		select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
+		from users u, staffs s 
+		where s.branch_seq=#{branchSeq} 
+		and s.join_date is null 
+		and u.user_id=s.staff_id 
+		order by u.name asc
+	</select> 
+	<select id="getLeftStaffs" resultType="java.util.Map" parameterType="int">
+		select distinct a.staff_id, a.profile_photo, a.name, a.gender, a.birth
+		from staffs s,
+		(select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
+		from users u, staffs s 
+		where s.branch_seq=#{branchSeq} 
+		and s.join_date is not null 
+		and s.leave_date is not null 
+		and u.user_id=s.staff_id
+		minus
+		select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
+		from staffs s, users u
+		where s.staff_id=u.user_id
+		and branch_seq=#{branchSeq} 
+		and join_date is not null
+		and leave_date is null
+		minus
+		select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
+		from users u, staffs s
+		where s.branch_seq=#{branchSeq} 
+		and s.join_date is null
+		and u.user_id=s.staff_id ) a
+		where s.staff_id=a.staff_id
+		order by a.name asc
+	</select>
+	<update id="setJoinDate" parameterType="java.util.Map">
+		update staffs 
+		set join_date=to_char(sysdate, 'yyyy/mm/dd')
+		where staff_id=#{staffId}
+		and branch_seq=#{branchSeq}
+		and join_date is null
+	</update>
+	<delete id="removeStaff" parameterType="java.util.Map">
+		delete staffs 
+		where staff_id=#{staffId}
+		and branch_seq=#{branchSeq}
+		and join_date is null
+		and leave_date is null
+	</delete>
+	<update id="setLeaveDate" parameterType="java.util.Map">
+		update staffs 
+		set leave_date=to_char(sysdate, 'yyyy/mm/dd')
+		where staff_id=#{staffId}
+		and branch_seq=#{branchSeq}
+		and join_date is not null
+		and leave_date is null
+	</update>
+	<select id="getStaffDetail" resultType="java.util.Map" parameterType="java.util.Map">
+		select a.staff_id, a.profile_photo, a.name, a.gender, a.birth, a.join_date, a.leave_date, a.work_part, a.bank_name, a.account_num, a.resume_file, a.health_file, a.bank_file, a.phone_num
+		from 
+		(select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth, to_char(s.join_date, 'YYYY/MM/DD') as join_date, to_char(s.leave_date, 'YYYY/MM/DD') as leave_date, s.work_part, s.bank_name, s.account_num, s.resume_file, s.health_file, s.bank_file, u.phone_num 
+		from users u, staffs s
+		where staff_id = #{staffId}
+		and branch_seq = #{branchSeq}
+		and u.user_id = s.staff_id
+		order by s.join_date desc) a
+		where rownum=1
+	</select>
+	<insert id="addStaff" parameterType="com.matrix.spring.staff.StaffVO">
+		insert into staffs
+		(staff_seq, staff_id, branch_seq, bank_name, account_num, resume_file, health_file, bank_file) 
+		values(staff_seq.nextval, #{staffId}, #{branchSeq}, #{bankName}, #{accountNum}, #{resumeFile}, #{healthFile}, #{bankFile})
+	</insert>
+	<update id="setStaffInfo" parameterType="com.matrix.spring.staff.StaffVO">
+		update staffs
+		set resume_file = #{resumeFile}, health_file = #{healthFile}, bank_file = #{bankFile}, bank_name = #{bankName}, account_num = #{accountNum}
+		where staff_id = #{staffId}
+		and branch_seq = #{branchSeq}
+		and staff_seq = 
+		(select staff_seq
+		from 
+		(select staff_seq, to_char(join_date, 'YYYY/MM/DD') as join_date
+		from staffs
+		where staff_id = #{staffId}
+		and branch_seq = #{branchSeq}
+		order by join_date DESC)
+		where rownum = 1) 
+	</update>
+	<update id="setWorkPart" parameterType="java.util.Map">
+		update staffs 
+		set work_part=#{workPart}
+		where staff_id=#{staffId}
+		and branch_seq=#{branchSeq} 
+		and join_date is not null
+		and leave_date is null	
+	</update>
+	<select id="isStaffDate" parameterType="java.util.Map" resultType="java.util.Map">
+		select staff_id, branch_seq, to_char(join_date, 'YYYY/MM/DD') as join_date, to_char(leave_date, 'YYYY/MM/DD') as leave_date 
+		from staffs 
+		where staff_id=#{staffId} 
+		and branch_seq=#{branchSeq}
+		<choose>
+		<when test="joinDate == null" >
+			and join_date is null
+		</when>
+		<otherwise>
+			and join_date=#{joinDate}
+		</otherwise>
+		</choose>
+		<choose>
+		<when test="leaveDate == null">
+			and leave_date is null
+		</when>
+		<otherwise>
+			and leave_date=#{leaveDate} 
+		</otherwise>
+		</choose>
+	</select>
+	<select id="isBranchSeq" parameterType="int" resultType="String">
+		select distinct branch_seq 
+		from admins 
+		where branch_seq=#{branchSeq} 
+		and approve_date is not null 
+		and revoke_date is null
+	</select>
+</mapper>
