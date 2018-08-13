@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="staffMapper">
-	<select id="getWorkParts" resultType="String" parameterType="int">
+	<select id="getWorkParts" resultType="String" parameterType="String">
 		select distinct work_part 
 		from staffs 
 		where branch_seq=#{branchSeq} 
@@ -9,7 +9,7 @@
 		and leave_date is null
 		order by work_part desc
 	</select>
-	<select id="getWorkingStaffs" resultType="java.util.Map" parameterType="int">
+	<select id="getWorkingStaffs" resultType="java.util.Map" parameterType="String">
 		select s.staff_id, u.gender, u.name, u.profile_photo, to_char(u.birth, 'YYYY/MM/DD') as birth, s.work_part
 		from staffs s, users u 
 		where s.staff_id=u.user_id 
@@ -17,7 +17,7 @@
 		and join_date is not null 
 		and leave_date is null
 	</select>
-	<select id="getPreStaffs" resultType="java.util.Map" parameterType="int">
+	<select id="getPreStaffs" resultType="java.util.Map" parameterType="String">
 		select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
 		from users u, staffs s 
 		where s.branch_seq=#{branchSeq} 
@@ -25,7 +25,7 @@
 		and u.user_id=s.staff_id 
 		order by u.name asc
 	</select> 
-	<select id="getLeftStaffs" resultType="java.util.Map" parameterType="int">
+	<select id="getLeftStaffs" resultType="java.util.Map" parameterType="String">
 		select distinct a.staff_id, a.profile_photo, a.name, a.gender, a.birth
 		from staffs s,
 		(select s.staff_id, u.profile_photo, u.name, u.gender, to_char(u.birth, 'YYYY/MM/DD') as birth
@@ -133,7 +133,7 @@
 		</otherwise>
 		</choose>
 	</select>
-	<select id="isBranchSeq" parameterType="int" resultType="String">
+	<select id="isBranchSeq" parameterType="String" resultType="String">
 		select distinct branch_seq 
 		from admins 
 		where branch_seq=#{branchSeq} 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="dailyMapper">
-	<select id="getAssignedParts" parameterType="String" resultType="String">
+	<select id="getAssignedParts" parameterType="java.util.Map" resultType="String">
 		select distinct assign_detail 
 		from daily_tasks 
 		where assign_type='파트' 
 		and assign_date = #{assignDate}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 		order by assign_detail desc
 	</select>
 	<select id="getDailyTasksForParts" parameterType="java.util.Map" resultType="java.util.Map">
@@ -14,6 +15,7 @@
 		where assign_date=#{assignDate} 
 		and assign_type='파트' 
 		and assign_detail=#{assignDetail}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<select id="getDailyTasksForPerson" parameterType="java.util.Map" resultType="java.util.Map">
 		select importance, daily_task, assign_detail, name as assign_name, finisher_id, finisher_name 
@@ -21,6 +23,7 @@
 		where assign_date=#{assignDate} 
 		and assign_type='개인'
 		and daily_tasks.assign_detail = users.user_id
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<insert id="addDailyTaskByInput" parameterType="com.matrix.spring.task.daily.DailyVO">
 		insert into daily_tasks 
@@ -33,31 +36,42 @@
 		values(daily_task_seq.nextval, #{dailyTask}, #{assignDate}, #{importance}, #{assignType}, #{assignDetail}, #{manualTaskSeq}, #{adminSeq})
 	</insert>
 	<select id="getDailyTasks" parameterType="String" resultType="String">
-		select daily_task from daily_tasks where assign_date=#{assignDate}
+		select daily_task 
+		from daily_tasks 
+		where assign_date=#{assignDate}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<update id="setDailyTaskByInput" parameterType="java.util.Map">
 		update daily_tasks
 		set daily_task=#{newDailyTask}, manual_task_seq = null, importance=#{newImportance}
 		where assign_date=#{assignDate} and assign_detail=#{assignDetail} and daily_task=#{oldDailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</update>
 	<update id="setDailyTaskByManual" parameterType="java.util.Map">
 		update daily_tasks
 		set daily_task=#{newDailyTask}, manual_task_seq = #{newManualTaskSeq}, importance=#{newImportance}
 		where assign_date=#{assignDate} and assign_detail=#{assignDetail} and daily_task=#{oldDailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</update>	
 	<update id="setDailyAssign" parameterType="java.util.Map">
 		update daily_tasks 
 		set assign_type=#{newAssignType}, assign_detail=#{newAssignDetail} 
 		where assign_date=#{assignDate} and assign_type=#{oldAssignType} and assign_detail=#{oldAssignDetail} and daily_task=#{dailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</update>
 	<delete id="removeDailyTask" parameterType="com.matrix.spring.task.daily.DailyVO">
 		delete daily_tasks 
-		where assign_date=#{assignDate} and assign_type=#{assignType} and assign_detail=#{assignDetail} and daily_task=#{dailyTask}
+		where assign_date=#{assignDate} 
+		and assign_type=#{assignType} 
+		and assign_detail=#{assignDetail} 
+		and daily_task=#{dailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</delete>
 	<select id="isDailyTask" parameterType="java.util.Map" resultType="String">
 		select daily_task 
 		from daily_tasks 
 		where assign_date=#{assignDate} and daily_task=#{dailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<select id="getDailyTask" parameterType="java.util.Map" resultType="java.util.Map">
 		select daily_task, assign_type, assign_detail 
@@ -65,27 +79,31 @@
 		where assign_date=#{assignDate} 
 			and daily_task=#{dailyTask}
 			and assign_detail=#{assignDetail}
+			and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
-	<select id="getBranchSeq" parameterType="int" resultType="int">
+	<select id="getBranchSeq" parameterType="String" resultType="String">
 		select distinct branch_seq
 		from daily_tasks d, admins a
 		where d.admin_seq = a.admin_seq
 		and d.admin_seq=#{adminSeq}
 	</select>
-	<select id="getAdminSeqs" resultType="int">
+	<select id="isAdminSeq" parameterType="String" resultType="String">
 		select distinct admin_seq from admins
 		where approve_date is not null
 		and revoke_date is null
+		and admin_seq = #{adminSeq}
 	</select>
-	<select id="getAdminSeqByAssignDateDailyTask" parameterType="java.util.Map" resultType="int">
+	<select id="getAdminSeqByAssignDateDailyTask" parameterType="java.util.Map" resultType="String">
 		select distinct admin_seq from daily_tasks
 		where assign_date=#{assignDate}
 		and daily_task=#{dailyTask}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<select id="getAssignDetail" parameterType="java.util.Map" resultType="String">
 		select assign_detail from daily_tasks
 		where daily_task=#{oldDailyTask} 
 		and assign_date=#{assignDate}
+		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<update id="setFinisher" parameterType="java.util.Map">
 		update daily_tasks 

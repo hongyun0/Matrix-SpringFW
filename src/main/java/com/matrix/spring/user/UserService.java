@@ -48,4 +48,15 @@ public class UserService implements IUserService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Map<String, String> getSlideInfo(String userId, String type) {
+		Map<String, String> result = null;
+		if(type.equals("admin")){
+			result = userDAO.getAdminSlideInfo(userId);
+		} else if(type.equals("staff")){
+			result = userDAO.getStaffSlideInfo(userId);
+		}
+		return result;
+	}
 }

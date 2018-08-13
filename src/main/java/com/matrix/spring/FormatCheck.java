@@ -1,10 +1,11 @@
-package com.matrix.spring.user;
+package com.matrix.spring;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class FormatCheck {
-	public FormatCheck(){}
-	
 	/**파일형식 검사*/
-	public static boolean isFileFormat(String file) {
+	public boolean isFileFormat(String file) {
 		boolean result = false;
 		if(file==null) {
 			return true;
@@ -29,7 +30,7 @@ public class FormatCheck {
 	}
 	
 	/**번호 형식 검사*/
-	public static boolean isNumberFormat(String num){
+	public boolean isNumberFormat(String num){
 		boolean result=false;
 		if(num==null){
 			return true;
@@ -44,7 +45,7 @@ public class FormatCheck {
 	}
 	
 	/**입력값 길이 검사*/
-	public static boolean isInputLength(String input, int minDigit, int maxDigit) {
+	public boolean isInputLength(String input, int minDigit, int maxDigit) {
 		boolean result = false;
 		if(input==null) {
 			return true;
@@ -57,7 +58,7 @@ public class FormatCheck {
 	}
 	
 	/**이메일 도메인 형식 검사*/
-	public static boolean isDomainFormat(String emailDomain) {
+	public boolean isDomainFormat(String emailDomain) {
 		boolean result = false;
 		if(emailDomain==null){
 			return true;
@@ -77,7 +78,7 @@ public class FormatCheck {
 	}
 	
 	/**입력받은 문자열의 byte크기 리턴*/
-	public static int getByteSize(String s) {
+	public int getByteSize(String s) {
 	    int count = 0;
 	    char[] ch = s.toCharArray();
 	    for (int i = 0; i < s.length(); i++) {

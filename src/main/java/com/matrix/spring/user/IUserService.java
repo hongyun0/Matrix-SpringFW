@@ -10,4 +10,5 @@ public interface IUserService {
 	boolean isUserPhone(String phoneNum);
 	String getUserPhoneById(String userId);
 	String getUserIdByPhoneNum(String phoneNum);
+	Map<String, String> getSlideInfo(String userId, String type);
 }
