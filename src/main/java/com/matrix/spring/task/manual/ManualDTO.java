@@ -1,6 +1,6 @@
 package com.matrix.spring.task.manual;
 
-public class ManualVO {
+public class ManualDTO {
 	/**member data*/
 	private int manualTaskSeq;
 	private String manualTask;
@@ -10,7 +10,7 @@ public class ManualVO {
 	private String taskType;
 	
 	/**constructor: 반복 기준 없는 업무*/
-	public ManualVO(int manualTaskSeq, String manualTask, String spaceType, String taskType) {
+	public ManualDTO(int manualTaskSeq, String manualTask, String spaceType, String taskType) {
 		setManualTaskSeq(manualTaskSeq);
 		setManualTask(manualTask);
 		setSpaceType(spaceType);
@@ -18,7 +18,7 @@ public class ManualVO {
 	}
 
 	/**constructor: 반복 기준 있는 업무*/
-	public ManualVO(int manualTasksSeq, String manualTask, String repeatType, String repeatDetail, String spaceType, String taskType) {
+	public ManualDTO(int manualTasksSeq, String manualTask, String repeatType, String repeatDetail, String spaceType, String taskType) {
 		this(manualTasksSeq, manualTask, spaceType, taskType);
 		setRepeatType(repeatType);
 		setRepeatDetail(repeatDetail);
@@ -99,7 +99,7 @@ public class ManualVO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ManualVO other = (ManualVO) obj;
+		ManualDTO other = (ManualDTO) obj;
 		if (manualTaskSeq != other.manualTaskSeq)
 			return false;
 		return true;

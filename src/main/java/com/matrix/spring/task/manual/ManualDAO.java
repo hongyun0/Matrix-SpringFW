@@ -1,5 +1,6 @@
 package com.matrix.spring.task.manual;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,17 +15,19 @@ public class ManualDAO {
 	private SqlSession sqlSession;
 
 	/** 추천업무 출력 : 업무배정, 업무수정 */
-	public List<Map<String, String>> getRecommendedTasks(String date) {
+	public List<Map<String, String>> getRecommendedTasks(String date, String branchSeq) {
 		List<Map<String, String>> tasks = sqlSession.selectList("manualMapper.getPeriodicManualTasks");
+		List<Map<String, String>> output = new ArrayList<>();
 		for (Map<String, String> task : tasks) {
 			Map<String, String> input = new HashMap<>();
 			input.putAll(task);
 			input.put("date", date);
-			if ((int)sqlSession.selectOne("manualMapper.getRecommendedTasks", input) > 0) {
-				tasks.remove(task);
+			input.put("branchSeq", branchSeq);
+			if ((int)sqlSession.selectOne("manualMapper.isRecommendedTask", input) == 0) {
+				output.add(task);
 			}
 		}
-		return tasks;
+		return output;
 	}
 
 	/** 매뉴얼 업무 검색 (자동완성) */
@@ -86,7 +89,7 @@ public class ManualDAO {
 		return list;
 	}
 
-	/** i: 업무명, o: ManualTaskSeq 단 값이 -1인경우는 해당 없다. */
+	/** i: 업무명, o: ManualTaskSeq */
 	public String getManualTaskSeq(String searchTask) {
 		String manualTaskSeq = null;
 		manualTaskSeq = sqlSession.selectOne("manualMapper.getManualTaskSeq", searchTask);

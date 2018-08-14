@@ -69,7 +69,7 @@
 }
 
 .unfinished {
-	color: gray;
+	color: #bababa;
 }
 ul {
 	list-style: none;
@@ -248,10 +248,10 @@ $(function(){
     <span id="updateTaskContent"></span>
 </div>
 <c:choose>
-	<c:when test="${!empty param.prevDate}">
+	<c:when test="${!empty param.date}">
 		<script>
 		$(document).ready(function() {
-			$("#datepicker").datepicker("setDate", "${param.prevDate}");
+			$("#datepicker").datepicker("setDate", "${param.date}");
 			contentLoad();
 		});
 		</script>
@@ -360,7 +360,7 @@ $(function(){
 		$("#deleteTask").hide();
 		if ($(this).hasClass("clicked")) {
 			$(".assignDetail").not($(".unfinished")).parent("li").css({
-				"color" : "lightgray"
+				"color" : "#bababa"
 			});
 			$(".unfinished").show();
 			$(".unfinished").prev().show();

@@ -25,12 +25,12 @@
 		and daily_tasks.assign_detail = users.user_id
 		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
-	<insert id="addDailyTaskByInput" parameterType="com.matrix.spring.task.daily.DailyVO">
+	<insert id="addDailyTaskByInput" parameterType="com.matrix.spring.task.daily.DailyDTO">
 		insert into daily_tasks 
 		(daily_task_seq, daily_task, assign_date, importance, assign_type, assign_detail, manual_task_seq, admin_seq) 
 		values(daily_task_seq.nextval, #{dailyTask}, #{assignDate}, #{importance}, #{assignType}, #{assignDetail}, null, #{adminSeq})
 	</insert>
-	<insert id="addDailyTaskByManual" parameterType="com.matrix.spring.task.daily.DailyVO">
+	<insert id="addDailyTaskByManual" parameterType="com.matrix.spring.task.daily.DailyDTO">
 		insert into daily_tasks 
 		(daily_task_seq, daily_task, assign_date, importance, assign_type, assign_detail, manual_task_seq, admin_seq) 
 		values(daily_task_seq.nextval, #{dailyTask}, #{assignDate}, #{importance}, #{assignType}, #{assignDetail}, #{manualTaskSeq}, #{adminSeq})
@@ -59,7 +59,7 @@
 		where assign_date=#{assignDate} and assign_type=#{oldAssignType} and assign_detail=#{oldAssignDetail} and daily_task=#{dailyTask}
 		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</update>
-	<delete id="removeDailyTask" parameterType="com.matrix.spring.task.daily.DailyVO">
+	<delete id="removeDailyTask" parameterType="com.matrix.spring.task.daily.DailyDTO">
 		delete daily_tasks 
 		where assign_date=#{assignDate} 
 		and assign_type=#{assignType} 

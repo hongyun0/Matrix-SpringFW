@@ -86,7 +86,7 @@ public class StaffDAO {
 	}
 
 	/** 직원 등록(승인요청) */
-	public void addStaff(StaffVO vo) {
+	public void addStaff(StaffDTO vo) {
 		Map<String, String> staff = getStaffDetail(vo.getStaffId(), vo.getBranchSeq());
 		if (!formatCheck.isInputLength(vo.getAccountNum(), 0, 20)
 				|| !formatCheck.isInputLength(vo.getResumeFile(), 0, 40)
@@ -114,7 +114,7 @@ public class StaffDAO {
 	}
 
 	/** 직원 회원정보 변경 - 모든 정보 */
-	public void setStaffInfo(StaffVO vo) {
+	public void setStaffInfo(StaffDTO vo) {
 		if (!formatCheck.isFileFormat(vo.getResumeFile()) || !formatCheck.isFileFormat(vo.getHealthFile())
 				|| !formatCheck.isFileFormat(vo.getBankFile())) {
 			throw new RuntimeException("setStaffInfo 실패:파일형식 오류");
@@ -126,7 +126,7 @@ public class StaffDAO {
 	}
 
 	/** 직원목록 - 직원 소속파트 배정/변경 */
-	public void setWorkPart(StaffVO vo) {
+	public void setWorkPart(StaffDTO vo) {
 		sqlSession.update("staffMapper.setWorkPart", vo);
 	}
 

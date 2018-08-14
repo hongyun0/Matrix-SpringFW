@@ -41,42 +41,13 @@ public class DailyService implements IDailyService {
 	}
 
 	@Override
-	public void setDailyTask(String newDailyTask, String oldDailyTask, String assignDate, String assignDetail,
-			String newImportance, String branchSeq) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeDailyTask(String dailyTask, String assignDate, String assignType, String assignDetail,
-			String branchSeq) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<Map<String, String>> getRecommendedTasks(String date, String branchSeq) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean isDailyTask(String dailyTask, String assignDate, String branchSeq) {
-		// TODO Auto-generated method stub
-		return false;
+		return dailyDAO.isDailyTask(dailyTask, assignDate, branchSeq);
 	}
 
 	@Override
-	public void addDailyTask(DailyVO dailyVO) {
-		// TODO Auto-generated method stub
-		
+	public void addDailyTask(DailyDTO dailyVO) throws ParseException {
+		dailyDAO.addDailyTask(dailyVO);
 	}
 
-	@Override
-	public void setFinisher(String userId, String staffName, String assignDate, String branchSeq, String dailyTask) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
 }

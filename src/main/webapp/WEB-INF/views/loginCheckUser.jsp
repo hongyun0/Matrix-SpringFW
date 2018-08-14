@@ -4,6 +4,6 @@
 <c:if test="${empty userId}">
 	<script>
 		alert('회원 전용 페이지입니다. 로그인 해주세요.');
-		location.href="login";
+		location.href="/matrix/login";
 	</script>
 </c:if>

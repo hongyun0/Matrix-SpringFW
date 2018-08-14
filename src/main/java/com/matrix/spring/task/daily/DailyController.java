@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,9 +60,32 @@ public class DailyController {
 		return page;
 	}
 	
-	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.PUT)
-	public String assignTask(@RequestParam DailyVO dailyVO) {
-		dailyService.addDailyTask(dailyVO);
-		return "";
+	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.GET)
+	public String assignTask() {
+		return "assignTaskAdmin";
+	}
+	
+	@RequestMapping(value = "/admin/task/daily/assign/next", method = RequestMethod.GET)
+	public String assignTaskNext() {
+		return "assignTaskNextAdmin";
+	}
+	
+	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.POST)
+	public String assignTask(DailyDTO dailyVO, @SessionAttribute String adminSeq) {
+		try {
+			dailyVO.setAdminSeq(adminSeq);
+			dailyService.addDailyTask(dailyVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "succeed";
+	}
+	
+	@RequestMapping(value = "/admin/task/daily/exist", method = RequestMethod.GET)
+	public String isDailyTask(@RequestParam String dailyTask, @RequestParam String assignDate,
+			@SessionAttribute String branchSeq, Model model) {
+		boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
+		model.addAttribute("result", result);
+		return "isExist";
 	}
 }

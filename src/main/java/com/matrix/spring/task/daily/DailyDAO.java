@@ -102,7 +102,7 @@ public class DailyDAO {
 
 	/** 업무 배정 
 	 * @throws ParseException */
-	public void addDailyTask(DailyVO vo) throws ParseException {
+	public void addDailyTask(DailyDTO vo) throws ParseException {
 		vo.setManualTaskSeq(manualDAO.getManualTaskSeq(vo.getDailyTask()));
 		if (vo.getDailyTask() == null) {
 			throw new RuntimeException("입력된 업무가 없습니다.");
@@ -284,7 +284,7 @@ public class DailyDAO {
 
 	/** 업무 삭제 
 	 * @throws ParseException */
-	public void removeDailyTask(DailyVO vo) throws ParseException {
+	public void removeDailyTask(DailyDTO vo) throws ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		Date today = new Date();
 		today.setTime(0);

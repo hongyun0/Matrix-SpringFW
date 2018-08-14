@@ -83,12 +83,12 @@
 		order by s.join_date desc) a
 		where rownum=1
 	</select>
-	<insert id="addStaff" parameterType="com.matrix.spring.staff.StaffVO">
+	<insert id="addStaff" parameterType="com.matrix.spring.staff.StaffDTO">
 		insert into staffs
 		(staff_seq, staff_id, branch_seq, bank_name, account_num, resume_file, health_file, bank_file) 
 		values(staff_seq.nextval, #{staffId}, #{branchSeq}, #{bankName}, #{accountNum}, #{resumeFile}, #{healthFile}, #{bankFile})
 	</insert>
-	<update id="setStaffInfo" parameterType="com.matrix.spring.staff.StaffVO">
+	<update id="setStaffInfo" parameterType="com.matrix.spring.staff.StaffDTO">
 		update staffs
 		set resume_file = #{resumeFile}, health_file = #{healthFile}, bank_file = #{bankFile}, bank_name = #{bankName}, account_num = #{accountNum}
 		where staff_id = #{staffId}

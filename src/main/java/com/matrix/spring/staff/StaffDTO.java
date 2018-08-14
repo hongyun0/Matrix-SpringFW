@@ -3,7 +3,7 @@ package com.matrix.spring.staff;
 import lombok.Data;
 
 @Data
-public class StaffVO {
+public class StaffDTO {
 	/**member data*/
 	private String staffId;
 	private String staffName;
@@ -16,7 +16,7 @@ public class StaffVO {
 	private String bankFile;
 	
 	/**직원등록요청, 직원회원정보변경용*/
-	public StaffVO(String staffId, String branchSeq, String bankName, String accountNum, String resumeFile, String healthFile, String bankFile) {
+	public StaffDTO(String staffId, String branchSeq, String bankName, String accountNum, String resumeFile, String healthFile, String bankFile) {
 		setStaffId(staffId);
 		setBranchSeq(branchSeq);
 		setBankName(bankName);
@@ -27,7 +27,7 @@ public class StaffVO {
 	}
 	
 	/**직원목록 조회용*/
-	public StaffVO(String staffId, String branchSeq, String workPart) {
+	public StaffDTO(String staffId, String branchSeq, String workPart) {
 		setStaffId(staffId);
 		setBranchSeq(branchSeq);
 		setWorkPart(workPart);
