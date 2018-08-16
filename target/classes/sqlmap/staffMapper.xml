@@ -121,7 +121,7 @@
 			and join_date is null
 		</when>
 		<otherwise>
-			and join_date=#{joinDate}
+			and join_date=TO_DATE(#{joinDate}, 'YYYY/MM/DD')
 		</otherwise>
 		</choose>
 		<choose>
@@ -129,7 +129,7 @@
 			and leave_date is null
 		</when>
 		<otherwise>
-			and leave_date=#{leaveDate} 
+			and leave_date=TO_DATE(#{leaveDate}, 'YYYY/MM/DD')
 		</otherwise>
 		</choose>
 	</select>
