@@ -33,6 +33,7 @@ public class UserController {
 			if (userService.login(userId, pw)) {
 				page = "loginOK";
 				request.getSession().setAttribute("userId", userId);
+				log.info("INFO [{}] login.", userId);
 			}
 		} catch (Exception e) {
 			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
