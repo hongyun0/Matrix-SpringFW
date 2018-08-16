@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
-<%String result = (String)request.getAttribute("result");%>
-<%="{\"result\":\""+result+"\"}"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:out escapeXml="false" value='{"result" : "${result}"}'></c:out>
