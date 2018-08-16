@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class DailyController {
 	@Autowired
@@ -35,8 +38,9 @@ public class DailyController {
 			}
 			model.addAttribute("parts", parts);
 			model.addAttribute("personal", personal);
+			log.info("INFO : get parts");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
 		
 		return "getAssignedParts";
@@ -55,7 +59,7 @@ public class DailyController {
 				page = "getDailyTasksForParts";
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
 		return page;
 	}
@@ -76,7 +80,7 @@ public class DailyController {
 			dailyVO.setAdminSeq(adminSeq);
 			dailyService.addDailyTask(dailyVO);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
 		return "succeed";
 	}
@@ -84,8 +88,12 @@ public class DailyController {
 	@RequestMapping(value = "/admin/task/daily/exist", method = RequestMethod.GET)
 	public String isDailyTask(@RequestParam String dailyTask, @RequestParam String assignDate,
 			@SessionAttribute String branchSeq, Model model) {
-		boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
-		model.addAttribute("result", result);
+		try {
+			boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
+			model.addAttribute("result", result);
+		} catch (Exception e) {
+			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
+		}
 		return "isExist";
 	}
 }

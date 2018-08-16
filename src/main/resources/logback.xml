@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- appender -->
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %-36logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<timestamp key="byDaily" datePattern="yyyyMMdd" />
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>/logs/log-${byDaily}.txt</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level [%-21thread] %-36logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- logger -->
+	<logger name="com.matrix.spring" level="warn"> 
+		<appender-ref ref="FILE" /> 
+	</logger>
+
+	<logger name="com.matrix.spring.task.daily" level="info">
+		<appender-ref ref="FILE" />
+	</logger>
+
+
+	<root level="debug">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>
