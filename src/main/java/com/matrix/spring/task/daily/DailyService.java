@@ -14,7 +14,6 @@ public class DailyService implements IDailyService {
 
 	@Override
 	public List<String> getAssignedParts(String assignDate, String branchSeq) throws ParseException {
-		// TODO Auto-generated method stub
 		List<String> parts = dailyDAO.getAssignedParts(assignDate, branchSeq);
 		boolean personal = true;
 		List<Map<String, String>> list = dailyDAO.getDailyTasksForPerson(assignDate, branchSeq);
