@@ -38,7 +38,6 @@ public class DailyController {
 			}
 			model.addAttribute("parts", parts);
 			model.addAttribute("personal", personal);
-			log.info("INFO : get parts");
 		} catch (Exception e) {
 			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
@@ -75,10 +74,11 @@ public class DailyController {
 	}
 	
 	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.POST)
-	public String assignTask(DailyDTO dailyVO, @SessionAttribute String adminSeq) {
+	public String assignTask(DailyDTO dailyVO, @SessionAttribute String adminSeq, @SessionAttribute String userId) {
 		try {
 			dailyVO.setAdminSeq(adminSeq);
 			dailyService.addDailyTask(dailyVO);
+			log.info("INFO [{}] assign '{}' to [{}].", userId, dailyVO.getDailyTask(), dailyVO.getAssignDetail());
 		} catch (Exception e) {
 			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
@@ -90,7 +90,7 @@ public class DailyController {
 			@SessionAttribute String branchSeq, Model model) {
 		try {
 			boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
-			model.addAttribute("result", result);
+			model.addAttribute("result", String.valueOf(result));
 		} catch (Exception e) {
 			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
 		}
