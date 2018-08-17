@@ -14,24 +14,28 @@
 
 	<timestamp key="byDaily" datePattern="yyyyMMdd" />
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>/logs/log-${byDaily}.txt</file>
+		<file>/home/ec2-user/logs/log-${byDaily}.txt</file>
 		<append>true</append>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %-5level [%-21thread] %-36logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
+	
+	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+    <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+      <driverClass>oracle.jdbc.driver.OracleDriver</driverClass>
+      <url>jdbc:oracle:thin:@yun0dbinstance.c9gk3vhc0fvu.ap-northeast-2.rds.amazonaws.com:1521:ORCL</url>
+      <user>master</user>
+      <password>master1234</password>
+    </connectionSource>
+  </appender>
 
 	<!-- logger -->
-	<logger name="com.matrix.spring" level="warn"> 
-		<appender-ref ref="FILE" /> 
+	<logger name="com.matrix.spring" level="info"> 
+		<appender-ref ref="DB" /> 
 	</logger>
 
-	<logger name="com.matrix.spring.task.daily" level="info">
-		<appender-ref ref="FILE" />
-	</logger>
-
-
-	<root level="debug">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
