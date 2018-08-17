@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Controller
 public class UserController {
 	@Autowired
@@ -29,25 +26,16 @@ public class UserController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login(@RequestParam String userId, @RequestParam String pw, HttpServletRequest request) {
 		String page = "loginError";
-		try {
-			if (userService.login(userId, pw)) {
-				page = "loginOK";
-				request.getSession().setAttribute("userId", userId);
-				log.info("INFO [{}] login.", userId);
-			}
-		} catch (Exception e) {
-			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
+		if (userService.login(userId, pw)) {
+			page = "loginOK";
+			request.getSession().setAttribute("userId", userId);
 		}
 		return page;
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) {
-		try {
-			request.getSession().invalidate();
-		} catch (Exception e) {
-			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
-		}
+		request.getSession().invalidate();
 		return "redirect:login";
 	}
 
@@ -55,36 +43,28 @@ public class UserController {
 	public String certify(@SessionAttribute String userId, HttpServletRequest request) {
 		String page = "certify";
 
-		try {
-			Map<String, String> user = userService.getCertifiedInfo(userId);
-			if (user != null) {
-				String type = user.get("type");
-				HttpSession session = request.getSession();
-				if (type.equals("admin")) {
-					page = "admin/task/daily";
-					session.setAttribute("branchSeq", user.get("BRANCH_SEQ"));
-					session.setAttribute("adminSeq", user.get("ADMIN_SEQ"));
-				} else if (type.equals("staff")) {
-					page = "staff/task/daily";
-					session.setAttribute("branchSeq", user.get("BRANCH_SEQ"));
-					session.setAttribute("staffName", user.get("NAME"));
-				}
-				session.setAttribute("type", type);
-			} 
-		} catch (Exception e) {
-			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
+		Map<String, String> user = userService.getCertifiedInfo(userId);
+		if (user != null) {
+			String type = user.get("type");
+			HttpSession session = request.getSession();
+			if (type.equals("admin")) {
+				page = "admin/task/daily";
+				session.setAttribute("branchSeq", user.get("BRANCH_SEQ"));
+				session.setAttribute("adminSeq", user.get("ADMIN_SEQ"));
+			} else if (type.equals("staff")) {
+				page = "staff/task/daily";
+				session.setAttribute("branchSeq", user.get("BRANCH_SEQ"));
+				session.setAttribute("staffName", user.get("NAME"));
+			}
+			session.setAttribute("type", type);
 		}
 		return "redirect:" + page;
 	}
-	
+
 	@RequestMapping(value = "/slideinfo", method = RequestMethod.GET)
 	public String getSlideInfo(@SessionAttribute String userId, @SessionAttribute String type, Model model) {
-		try {
-			Map<String, String> info = userService.getSlideInfo(userId, type);
-			model.addAttribute("info", info);
-		} catch (Exception e) {
-			log.warn("WARN! {} : '{}' [{}]", e.getClass().getName(), e.getMessage(), e.getStackTrace()[0]);
-		}
+		Map<String, String> info = userService.getSlideInfo(userId, type);
+		model.addAttribute("info", info);
 		return "getSlideInfo";
 	}
 
