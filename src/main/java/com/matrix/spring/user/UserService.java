@@ -16,8 +16,8 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void addUser(UserDTO user) {
-		userDAO.addUser(user);
+	public void addUser(UserDTO userDTO) {
+		userDAO.addUser(userDTO);
 	}
 
 	@Override

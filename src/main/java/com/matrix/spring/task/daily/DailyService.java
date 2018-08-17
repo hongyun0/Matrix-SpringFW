@@ -45,8 +45,8 @@ public class DailyService implements IDailyService {
 	}
 
 	@Override
-	public void addDailyTask(DailyDTO dailyVO) throws ParseException {
-		dailyDAO.addDailyTask(dailyVO);
+	public void addDailyTask(DailyDTO dailyDTO) throws ParseException {
+		dailyDAO.addDailyTask(dailyDTO);
 	}
 
 }

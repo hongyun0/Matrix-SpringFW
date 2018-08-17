@@ -33,32 +33,32 @@ public class UserDAO {
 	}
 
 	/** 회원가입 */
-	public void addUser(UserDTO vo) {
-		if (!formatCheck.isFileFormat(vo.getProfilePhoto())) {
+	public void addUser(UserDTO userDTO) {
+		if (!formatCheck.isFileFormat(userDTO.getProfilePhoto())) {
 			throw new RuntimeException("addUser 실패 profilePhotoFormat 오류");
 		}
-		if (!formatCheck.isDomainFormat(vo.getEmailDomain())) {
+		if (!formatCheck.isDomainFormat(userDTO.getEmailDomain())) {
 			throw new RuntimeException("addUser 실패 emailDomainFormat 오류");
 		}
-		if (!formatCheck.isNumberFormat(vo.getPhoneNum()) || !formatCheck.isNumberFormat(vo.getBirthYear())
-				|| !formatCheck.isNumberFormat(vo.getBirthMonth()) || !formatCheck.isNumberFormat(vo.getBirthDay())) {
+		if (!formatCheck.isNumberFormat(userDTO.getPhoneNum()) || !formatCheck.isNumberFormat(userDTO.getBirthYear())
+				|| !formatCheck.isNumberFormat(userDTO.getBirthMonth()) || !formatCheck.isNumberFormat(userDTO.getBirthDay())) {
 			throw new RuntimeException("addUser 실패 휴대폰번호/생년월일 numberFormat 오류");
 		}
-		if (!formatCheck.isInputLength(vo.getUserId(), 6, 16) || !formatCheck.isInputLength(vo.getPw(), 6, 16)
-				|| !formatCheck.isInputLength(vo.getPhoneNum(), 10, 11)
-				|| !formatCheck.isInputLength(vo.getEmailAccount() + "@" + vo.getEmailDomain(), 0, 40)
-				|| !formatCheck.isInputLength(vo.getName(), 2, 4) || !formatCheck.isInputLength(vo.getBirthYear(), 4, 4)
-				|| !formatCheck.isInputLength(vo.getBirthMonth(), 2, 2) || !formatCheck.isInputLength(vo.getBirthDay(), 2, 2)) {
+		if (!formatCheck.isInputLength(userDTO.getUserId(), 6, 16) || !formatCheck.isInputLength(userDTO.getPw(), 6, 16)
+				|| !formatCheck.isInputLength(userDTO.getPhoneNum(), 10, 11)
+				|| !formatCheck.isInputLength(userDTO.getEmailAccount() + "@" + userDTO.getEmailDomain(), 0, 40)
+				|| !formatCheck.isInputLength(userDTO.getName(), 2, 4) || !formatCheck.isInputLength(userDTO.getBirthYear(), 4, 4)
+				|| !formatCheck.isInputLength(userDTO.getBirthMonth(), 2, 2) || !formatCheck.isInputLength(userDTO.getBirthDay(), 2, 2)) {
 			throw new RuntimeException("addUser 실패 inputLength 오류");
 		}
-		if (isUserId(vo.getUserId())) {
+		if (isUserId(userDTO.getUserId())) {
 			throw new RuntimeException("addUser 실패 existingUserId");
 		}
-		if (!vo.getGender().equals("M") && !vo.getGender().equals("F")) {
+		if (!userDTO.getGender().equals("M") && !userDTO.getGender().equals("F")) {
 			throw new RuntimeException("addUser 실패 wrongGenderFormat");
 		}
 
-		sqlSession.insert("userMapper.addUser", vo);
+		sqlSession.insert("userMapper.addUser", userDTO);
 	}
 
 	/** 휴대폰 번호 중복 검사 */
@@ -133,28 +133,28 @@ public class UserDAO {
 	}
 
 	/** 기본 회원정보 변경 */
-	public void setUserInfo(UserDTO vo) {
-		if (!formatCheck.isFileFormat(vo.getProfilePhoto())) {
+	public void setUserInfo(UserDTO userDTO) {
+		if (!formatCheck.isFileFormat(userDTO.getProfilePhoto())) {
 			throw new RuntimeException("setUserInfo 실패 profilePhotoFormat");
 		}
-		if (!formatCheck.isDomainFormat(vo.getEmailDomain())) {
+		if (!formatCheck.isDomainFormat(userDTO.getEmailDomain())) {
 			throw new RuntimeException("setUserInfo 실패 emailDomainFormat");
 		}
-		if (!formatCheck.isNumberFormat(vo.getPhoneNum()) || !formatCheck.isNumberFormat(vo.getBirthYear())
-				|| !formatCheck.isNumberFormat(vo.getBirthMonth()) || !formatCheck.isNumberFormat(vo.getBirthDay())) {
+		if (!formatCheck.isNumberFormat(userDTO.getPhoneNum()) || !formatCheck.isNumberFormat(userDTO.getBirthYear())
+				|| !formatCheck.isNumberFormat(userDTO.getBirthMonth()) || !formatCheck.isNumberFormat(userDTO.getBirthDay())) {
 			throw new RuntimeException("setUserInfo 실패 휴대폰번호/생년월일 numberFormat");
 		}
-		if (!formatCheck.isInputLength(vo.getUserId(), 6, 16) || !formatCheck.isInputLength(vo.getPhoneNum(), 10, 11)
-				|| !formatCheck.isInputLength(vo.getEmailAccount() + "@" + vo.getEmailDomain(), 0, 40)
-				|| !formatCheck.isInputLength(vo.getBirthYear(), 4, 4) || !formatCheck.isInputLength(vo.getBirthMonth(), 2, 2)
-				|| !formatCheck.isInputLength(vo.getBirthDay(), 2, 2)) {
+		if (!formatCheck.isInputLength(userDTO.getUserId(), 6, 16) || !formatCheck.isInputLength(userDTO.getPhoneNum(), 10, 11)
+				|| !formatCheck.isInputLength(userDTO.getEmailAccount() + "@" + userDTO.getEmailDomain(), 0, 40)
+				|| !formatCheck.isInputLength(userDTO.getBirthYear(), 4, 4) || !formatCheck.isInputLength(userDTO.getBirthMonth(), 2, 2)
+				|| !formatCheck.isInputLength(userDTO.getBirthDay(), 2, 2)) {
 			throw new RuntimeException("setUserInfo 실패 inputLength 오류");
 		}
-		if (!isUserId(vo.getUserId())) {
+		if (!isUserId(userDTO.getUserId())) {
 			throw new RuntimeException("setUserInfo 실패 null userId");
 		}
 
-		sqlSession.update("userMapper.setUserInfo", vo);
+		sqlSession.update("userMapper.setUserInfo", userDTO);
 	}
 
 	/** 현재 이름, 생년월일, 주소, 휴대폰번호, 프로필사진 보기 */

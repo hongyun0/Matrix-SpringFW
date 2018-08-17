@@ -86,12 +86,12 @@ public class StaffDAO {
 	}
 
 	/** 직원 등록(승인요청) */
-	public void addStaff(StaffDTO vo) {
-		Map<String, String> staff = getStaffDetail(vo.getStaffId(), vo.getBranchSeq());
-		if (!formatCheck.isInputLength(vo.getAccountNum(), 0, 20)
-				|| !formatCheck.isInputLength(vo.getResumeFile(), 0, 40)
-				|| !formatCheck.isInputLength(vo.getHealthFile(), 0, 40)
-				|| !formatCheck.isInputLength(vo.getBankFile(), 0, 40)) {
+	public void addStaff(StaffDTO staffDTO) {
+		Map<String, String> staff = getStaffDetail(staffDTO.getStaffId(), staffDTO.getBranchSeq());
+		if (!formatCheck.isInputLength(staffDTO.getAccountNum(), 0, 20)
+				|| !formatCheck.isInputLength(staffDTO.getResumeFile(), 0, 40)
+				|| !formatCheck.isInputLength(staffDTO.getHealthFile(), 0, 40)
+				|| !formatCheck.isInputLength(staffDTO.getBankFile(), 0, 40)) {
 			throw new RuntimeException("입력값 길이 제한 초과");
 		}
 		if ((staff.get("JOIN_DATE") == null) && (staff.get("LEAVE_DATE") == null)) {
@@ -100,34 +100,34 @@ public class StaffDAO {
 		if (staff.get("JOIN_DATE") != null) {
 			throw new RuntimeException("addStaff 실패:이미 재직중인 직원");
 		}
-		if (!isBranchSeq(vo.getBranchSeq())) {
+		if (!isBranchSeq(staffDTO.getBranchSeq())) {
 			throw new RuntimeException("addStaff 실패:없는 지점 코드");
 		}
-		if (!formatCheck.isFileFormat(vo.getResumeFile()) || !formatCheck.isFileFormat(vo.getHealthFile())
-				|| !formatCheck.isFileFormat(vo.getBankFile())) {
+		if (!formatCheck.isFileFormat(staffDTO.getResumeFile()) || !formatCheck.isFileFormat(staffDTO.getHealthFile())
+				|| !formatCheck.isFileFormat(staffDTO.getBankFile())) {
 			throw new RuntimeException("addStaff insert 실패:파일형식 오류");
 		}
-		if (!formatCheck.isNumberFormat(vo.getAccountNum())) {
+		if (!formatCheck.isNumberFormat(staffDTO.getAccountNum())) {
 			throw new NumberFormatException("addStaff 실패:계좌번호 형식 오류");
 		}
-		sqlSession.insert("staffMapper.addStaff", vo);
+		sqlSession.insert("staffMapper.addStaff", staffDTO);
 	}
 
 	/** 직원 회원정보 변경 - 모든 정보 */
-	public void setStaffInfo(StaffDTO vo) {
-		if (!formatCheck.isFileFormat(vo.getResumeFile()) || !formatCheck.isFileFormat(vo.getHealthFile())
-				|| !formatCheck.isFileFormat(vo.getBankFile())) {
+	public void setStaffInfo(StaffDTO staffDTO) {
+		if (!formatCheck.isFileFormat(staffDTO.getResumeFile()) || !formatCheck.isFileFormat(staffDTO.getHealthFile())
+				|| !formatCheck.isFileFormat(staffDTO.getBankFile())) {
 			throw new RuntimeException("setStaffInfo 실패:파일형식 오류");
 		}
-		if (!formatCheck.isNumberFormat(vo.getAccountNum())) {
+		if (!formatCheck.isNumberFormat(staffDTO.getAccountNum())) {
 			throw new NumberFormatException("setStaffInfo 실패:계좌번호 형식 오류");
 		}
-		sqlSession.update("staffMapper.setStaffInfo", vo);
+		sqlSession.update("staffMapper.setStaffInfo", staffDTO);
 	}
 
 	/** 직원목록 - 직원 소속파트 배정/변경 */
-	public void setWorkPart(StaffDTO vo) {
-		sqlSession.update("staffMapper.setWorkPart", vo);
+	public void setWorkPart(StaffDTO staffDTO) {
+		sqlSession.update("staffMapper.setWorkPart", staffDTO);
 	}
 
 	/** 특정 직원의 입사/퇴사 날짜 존재여부 조회 */

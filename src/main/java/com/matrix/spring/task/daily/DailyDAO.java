@@ -102,43 +102,43 @@ public class DailyDAO {
 
 	/** 업무 배정 
 	 * @throws ParseException */
-	public void addDailyTask(DailyDTO vo) throws ParseException {
-		vo.setManualTaskSeq(manualDAO.getManualTaskSeq(vo.getDailyTask()));
-		if (vo.getDailyTask() == null) {
+	public void addDailyTask(DailyDTO dailyDTO) throws ParseException {
+		dailyDTO.setManualTaskSeq(manualDAO.getManualTaskSeq(dailyDTO.getDailyTask()));
+		if (dailyDTO.getDailyTask() == null) {
 			throw new RuntimeException("입력된 업무가 없습니다.");
 		}
-		if (isDailyTask(vo.getDailyTask(), vo.getAssignDate(), vo.getBranchSeq()) == true) {
+		if (isDailyTask(dailyDTO.getDailyTask(), dailyDTO.getAssignDate(), dailyDTO.getBranchSeq()) == true) {
 			throw new RuntimeException("이미 배정된 업무입니다.");
 		}
-		if (!vo.getAssignType().equals("개인") && !vo.getAssignType().equals("파트")) {
+		if (!dailyDTO.getAssignType().equals("개인") && !dailyDTO.getAssignType().equals("파트")) {
 			throw new RuntimeException("배정유형이 올바르지 않습니다.");
 		}
-		if (!vo.getImportance().equals("0") && !vo.getImportance().equals("1")) {
+		if (!dailyDTO.getImportance().equals("0") && !dailyDTO.getImportance().equals("1")) {
 			throw new RuntimeException("중요도 설정이 올바르지 않습니다.");
 		}
-		if (formatCheck.getByteSize(vo.getDailyTask()) > 60) {
+		if (formatCheck.getByteSize(dailyDTO.getDailyTask()) > 60) {
 			throw new RuntimeException("최대 한글 20자, 영어60자 입력 가능합니다.");
 		}
-		if (sqlSession.selectOne("dailyMapper.isAdminSeq", vo.getAdminSeq()) == null) {
+		if (sqlSession.selectOne("dailyMapper.isAdminSeq", dailyDTO.getAdminSeq()) == null) {
 			throw new RuntimeException("없는 관리자 코드입니다.");
 		}
-		String branchSeq = sqlSession.selectOne("dailyMapper.getBranchSeq", vo.getAdminSeq());
-		if (vo.getAssignType().equals("파트")) {
+		String branchSeq = sqlSession.selectOne("dailyMapper.getBranchSeq", dailyDTO.getAdminSeq());
+		if (dailyDTO.getAssignType().equals("파트")) {
 			Collection<String> workParts = staffDAO.getWorkParts(branchSeq); // 지점에 해당하는 파트 종류 호출
 			boolean flag = false;
 			for (String tmp : workParts) {
-				if (tmp != null && tmp.equals(vo.getAssignDetail())) {
+				if (tmp != null && tmp.equals(dailyDTO.getAssignDetail())) {
 					flag = true;
 				}
 			}
 			if (!flag) {
 				throw new RuntimeException("없는 파트입니다.");
 			}
-		} else if (vo.getAssignType().equals("개인")) {
+		} else if (dailyDTO.getAssignType().equals("개인")) {
 			Collection<Map<String, String>> workingStaffs = staffDAO.getWorkingStaffs(branchSeq); // 지점에 해당하는 재직중인 직원 호출
 			boolean flag = false;
 			for (Map<String, String> map : workingStaffs) {
-				if (map.get("STAFF_ID").equals(vo.getAssignDetail())) {
+				if (map.get("STAFF_ID").equals(dailyDTO.getAssignDetail())) {
 					flag = true;
 				}
 			}
@@ -152,15 +152,15 @@ public class DailyDAO {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		Date today = new Date();
 		today.setTime(0);
-		Date assignDate = df.parse(vo.getAssignDate());
+		Date assignDate = df.parse(dailyDTO.getAssignDate());
 		if (today.after(assignDate)) {
 			throw new RuntimeException("과거에 업무배정을 할 수 없습니다.");
 		}
 
-		if (vo.getManualTaskSeq() == null) {
-			sqlSession.insert("dailyMapper.addDailyTaskByInput", vo);
+		if (dailyDTO.getManualTaskSeq() == null) {
+			sqlSession.insert("dailyMapper.addDailyTaskByInput", dailyDTO);
 		} else {
-			sqlSession.insert("dailyMapper.addDailyTaskByManual", vo);
+			sqlSession.insert("dailyMapper.addDailyTaskByManual", dailyDTO);
 		}
 	}
 
@@ -284,18 +284,18 @@ public class DailyDAO {
 
 	/** 업무 삭제 
 	 * @throws ParseException */
-	public void removeDailyTask(DailyDTO vo) throws ParseException {
+	public void removeDailyTask(DailyDTO dailyDTO) throws ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		Date today = new Date();
 		today.setTime(0);
-		Date date = df.parse(vo.getAssignDate());
+		Date date = df.parse(dailyDTO.getAssignDate());
 		if (today.after(date)) {
 			throw new RuntimeException("과거의 업무를 삭제 할 수 없습니다.");
 		}
-		if (getDailyTask(vo.getDailyTask(), vo.getAssignDate(), vo.getAssignDetail(), vo.getBranchSeq()) == null) {
+		if (getDailyTask(dailyDTO.getDailyTask(), dailyDTO.getAssignDate(), dailyDTO.getAssignDetail(), dailyDTO.getBranchSeq()) == null) {
 			throw new RuntimeException("해당 날짜에 존재하지 않는 업무");
 		}
-		sqlSession.delete("dailyMapper.removeDailyTask", vo);
+		sqlSession.delete("dailyMapper.removeDailyTask", dailyDTO);
 	}
 
 	/** 직원: 업무 완료 선택 */

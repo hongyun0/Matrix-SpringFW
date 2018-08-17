@@ -8,7 +8,7 @@ public interface IDailyService {
 	List<String> getAssignedParts(String assignDate, String branchSeq) throws ParseException;
 	List<Map<String, String>> getDailyTasks(String assignDate, String assignType, String branchSeq) throws ParseException;
 	boolean isDailyTask(String dailyTask, String assignDate, String branchSeq);
-	void addDailyTask(DailyDTO dailyVO) throws ParseException;
+	void addDailyTask(DailyDTO dailyDTO) throws ParseException;
 /*	void setDailyTask(String newDailyTask, String oldDailyTask, String assignDate, String assignDetail, String newImportance, String branchSeq);
 	void removeDailyTask(String dailyTask, String assignDate, String assignType, String assignDetail, String branchSeq);
 	void setFinisher(String userId, String staffName, String assignDate, String branchSeq, String dailyTask); */
