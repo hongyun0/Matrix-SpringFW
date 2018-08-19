@@ -48,4 +48,12 @@ public class LogAspect {
 		log.info("INFO [{}] assign '{}' to [{}].", userId, dailyDTO.getDailyTask(), dailyDTO.getAssignDetail());
 	}
 	
+	@Pointcut(value = "execution(* com.matrix.spring.task.daily.DailyController.removeTask(*, *, *))")
+	private void removeTaskPointcut() {}
+	
+	@AfterReturning(pointcut = "removeTaskPointcut() && args(dailyDTO, *, userId)")
+	public void removeTaskInfo(JoinPoint joinPoint, DailyDTO dailyDTO, String userId) {
+		log.info("INFO [{}] remove '{}' from [{}].", userId, dailyDTO.getDailyTask(), dailyDTO.getAssignDetail());
+	}
+	
 }

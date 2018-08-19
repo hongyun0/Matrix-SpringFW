@@ -54,4 +54,9 @@ public class DailyService implements IDailyService {
 		dailyDAO.setUnfinished();
 	}
 
+	@Override
+	public void removeDailyTask(DailyDTO dailyDTO) throws ParseException {
+		dailyDAO.removeDailyTask(dailyDTO);
+	}
+
 }

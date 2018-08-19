@@ -10,7 +10,7 @@ public interface IDailyService {
 	boolean isDailyTask(String dailyTask, String assignDate, String branchSeq);
 	void addDailyTask(DailyDTO dailyDTO) throws ParseException;
 	void setUnfinished();
+	void removeDailyTask(DailyDTO dailyDTO) throws ParseException;
 /*	void setDailyTask(String newDailyTask, String oldDailyTask, String assignDate, String assignDetail, String newImportance, String branchSeq);
-	void removeDailyTask(String dailyTask, String assignDate, String assignType, String assignDetail, String branchSeq);
 	void setFinisher(String userId, String staffName, String assignDate, String branchSeq, String dailyTask); */
 	}

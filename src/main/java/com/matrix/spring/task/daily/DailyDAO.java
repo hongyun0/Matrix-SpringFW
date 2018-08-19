@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.matrix.spring.FormatCheck;
 import com.matrix.spring.staff.StaffDAO;
@@ -102,6 +103,7 @@ public class DailyDAO {
 
 	/** 업무 배정 
 	 * @throws ParseException */
+	@Transactional
 	public void addDailyTask(DailyDTO dailyDTO) throws ParseException {
 		dailyDTO.setManualTaskSeq(manualDAO.getManualTaskSeq(dailyDTO.getDailyTask()));
 		if (dailyDTO.getDailyTask() == null) {
@@ -178,6 +180,7 @@ public class DailyDAO {
 	 * 
 	 * @throws ParseException
 	 */
+	@Transactional
 	public void setDailyTask(String newDailyTask, String oldDailyTask, String assignDate, String assignDetail,
 			String newImportance, String branchSeq) throws ParseException {
 		Map<String, String> input = new HashMap<>();
@@ -223,14 +226,9 @@ public class DailyDAO {
 	}
 
 	/** 업무 한가지 검색 */
-	public Map<String, String> getDailyTask(String dailyTask, String assignDate, String assignDetail, String branchSeq) {
+	public Map<String, String> getDailyTask(DailyDTO dailyDTO) {
 		Map<String, String> result = null;
-		Map<String, String> input = new HashMap<>();
-		input.put("dailyTask", dailyTask);
-		input.put("assignDate", assignDate);
-		input.put("assignDetail", assignDetail);
-		input.put("branchSeq", branchSeq);
-		result = sqlSession.selectOne("dailyMapper.getDailyTask", input);
+		result = sqlSession.selectOne("dailyMapper.getDailyTask", dailyDTO);
 		if (result == null) {
 			throw new RuntimeException("선택된 업무가 존재하지 않습니다.");
 		}
@@ -238,6 +236,7 @@ public class DailyDAO {
 	}
 
 	/** 업무 재배정 */
+	@Transactional
 	public void setDailyAssign(String newAssignType, String newAssignDetail, String assignDate, String oldAssignType,
 			String oldAssignDetail, String dailyTask, String branchSeq) {
 		Map<String, String> input = new HashMap<>();
@@ -284,6 +283,7 @@ public class DailyDAO {
 
 	/** 업무 삭제 
 	 * @throws ParseException */
+	@Transactional
 	public void removeDailyTask(DailyDTO dailyDTO) throws ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		Date today = new Date();
@@ -292,7 +292,7 @@ public class DailyDAO {
 		if (today.after(date)) {
 			throw new RuntimeException("과거의 업무를 삭제 할 수 없습니다.");
 		}
-		if (getDailyTask(dailyDTO.getDailyTask(), dailyDTO.getAssignDate(), dailyDTO.getAssignDetail(), dailyDTO.getBranchSeq()) == null) {
+		if (getDailyTask(dailyDTO) == null) {
 			throw new RuntimeException("해당 날짜에 존재하지 않는 업무");
 		}
 		sqlSession.delete("dailyMapper.removeDailyTask", dailyDTO);

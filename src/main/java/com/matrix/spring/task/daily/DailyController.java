@@ -1,6 +1,7 @@
 package com.matrix.spring.task.daily;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +12,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+
+import com.matrix.spring.ResponseConverter;
 
 @Controller
 public class DailyController {
 	@Autowired
 	DailyService dailyService;
+	@Autowired
+	ResponseConverter responseConverter;
 
 	@RequestMapping(value = "/admin/task/daily", method = RequestMethod.GET)
 	public String dailyTaskAdmin() {
@@ -65,19 +71,26 @@ public class DailyController {
 	}
 
 	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.POST)
-	public String assignTask(DailyDTO dailyDTO, @SessionAttribute String adminSeq, @SessionAttribute String userId)
+	public @ResponseBody Map<String, String> assignTask(DailyDTO dailyDTO, @SessionAttribute String adminSeq, @SessionAttribute String userId)
 			throws ParseException {
 		dailyDTO.setAdminSeq(adminSeq);
 		dailyService.addDailyTask(dailyDTO);
-		return "succeed";
+		return responseConverter.getSucceed();
+	}
+	
+	@RequestMapping(value = "/admin/task/daily/remove", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> removeTask(DailyDTO dailyDTO, @SessionAttribute String branchSeq, @SessionAttribute String userId)
+			throws ParseException {
+		dailyDTO.setBranchSeq(branchSeq);
+		dailyService.removeDailyTask(dailyDTO);
+		return responseConverter.getSucceed();
 	}
 
 	@RequestMapping(value = "/admin/task/daily/exist", method = RequestMethod.GET)
-	public String isDailyTask(@RequestParam String dailyTask, @RequestParam String assignDate,
+	public @ResponseBody Map<String, String> isDailyTask(@RequestParam String dailyTask, @RequestParam String assignDate,
 			@SessionAttribute String branchSeq, Model model) {
 		boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
-		model.addAttribute("result", String.valueOf(result));
-		return "isExist";
+		return responseConverter.getBoolean(result);
 	}
 	
 	@Scheduled(cron = "0 0 0 * * *")
