@@ -86,7 +86,7 @@ li.important::before {
 	font-size: 12px;
 	margin-left: -15px;
 }
-li.deleting:after {
+.deleting li:after {
 	content: "\26D4";
 	color: rgb(255, 230, 230);
 }
@@ -433,30 +433,33 @@ $(function(){
 
 	$("#deleteTask").click(function() {
 		$("#updateTask").hide();
-		$("li").toggleClass("deleting");
-		if ($("li").hasClass("deleting")) {
+		$("#content").toggleClass("deleting");
+		if ($("#content").hasClass("deleting")) {
 			$(this).html("삭제 완료");
-			$("li").click(function() {
-				var task = this.childNodes[0].nodeValue.trim();
+			$("#content").click(function(event) {
+				if (!$(event.target).is("li")) {
+					return;
+				}
+				var task = event.target.childNodes[0].nodeValue.trim();
 				if(confirm(task + ' 업무를 삭제하시겠습니까?')){
 					var type = '파트';
-					if($(this).hasClass("personal")){
+					if($(event.target).hasClass("personal")){
 						type = '개인';
 					}
 					$.ajax({
-						url : "controller?cmd=removeDailyTaskAction",
+						url : "admin/task/daily/remove",
+						type : "POST",
 						data : {
 							dailyTask :  task,
 							assignType : type,
-							assignDetail : $(this).children(".assignDetail").attr("id"),
+							assignDetail : $(event.target).children(".assignDetail").attr("id"),
 							assignDate : $("#datepicker").val()
 						},
 						success : function(result) {
-							var result = JSON.parse(result);
-							if(result["result"] == "성공") {
+							if(result.result == "succeed") {
 								alert(task +' 업무가 삭제되었습니다.')
 							}
-							location.href="controller?cmd=dailyTaskAdminUI&date=" + $("#datepicker").val();
+							location.href="admin/task/daily?date=" + $("#datepicker").val();
 						}
 					});
 				}
