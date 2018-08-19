@@ -1,8 +1,8 @@
 package com.matrix.spring;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class FormatCheck {
 	/**파일형식 검사*/
 	public boolean isFileFormat(String file) {
