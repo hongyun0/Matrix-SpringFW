@@ -337,8 +337,7 @@ $('#assignButton').on('click',function (){
 	        	assignDetail : $(".selectedAssignDetail").prop("id")
 	        },
 	        success : function(result) {
-	        	var result = JSON.parse(result);
-				if(result["result"] == "성공") {
+				if(result.result == "succeed") {
 	        		alert("${param.selectedTask} 업무를 " + $(".selectedAssignDetail").text().trim() + $(".selectedAssignType").text() + "에게 배정했습니다.");
 					location.href = "admin/task/daily?date=${param.date}";
 				}

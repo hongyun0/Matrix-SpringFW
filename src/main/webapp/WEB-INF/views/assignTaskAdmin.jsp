@@ -448,8 +448,7 @@ $("#goNext").on("click", function() {
         	assignDate : "${param.date}",
         },
         success : function(result) {
-        	result = JSON.parse(result);
-			if(result["result"] == "true") {
+			if(result.result == "true") {
 				alert('해당 날짜에 이미 배정된 업무입니다.')
 				$("#closeModal").click();
 			} else {
