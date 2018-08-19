@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,4 +79,10 @@ public class DailyController {
 		model.addAttribute("result", String.valueOf(result));
 		return "isExist";
 	}
+	
+	@Scheduled(cron = "0 0 0 * * *")
+	public void setUnfinished() {
+		dailyService.setUnfinished();
+	}
+	
 }

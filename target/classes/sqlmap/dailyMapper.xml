@@ -117,4 +117,11 @@
 		and revoke_date is null 
 		and branch_seq=#{branchSeq})
 	</update>
+	<update id="setUnfinished" parameterType="String">
+		update daily_tasks 
+		set finisher_name='미완료'
+		where assign_date = TO_DATE(#{date}, 'YYYY/MM/DD') - 1
+		and finisher_id is null
+		and finisher_name is null 
+	</update>
 </mapper>

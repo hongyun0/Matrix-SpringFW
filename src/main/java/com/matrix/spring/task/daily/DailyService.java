@@ -49,4 +49,9 @@ public class DailyService implements IDailyService {
 		dailyDAO.addDailyTask(dailyDTO);
 	}
 
+	@Override
+	public void setUnfinished() {
+		dailyDAO.setUnfinished();
+	}
+
 }

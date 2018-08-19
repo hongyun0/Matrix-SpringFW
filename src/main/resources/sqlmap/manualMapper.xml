@@ -13,6 +13,7 @@
 		from DAILY_TASKS
 		where ASSIGN_DATE between to_date(#{date}, 'YYYY/MM/DD')-#{REPEAT_DETAIL} and to_date(#{date}, 'YYYY/MM/DD')+1
 		and MANUAL_TASK_SEQ=#{MANUAL_TASK_SEQ}
+		and FINISHER_NAME != '미완료'
 		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
 	<select id="searchManualTasks" resultType="java.util.Map" parameterType="String">

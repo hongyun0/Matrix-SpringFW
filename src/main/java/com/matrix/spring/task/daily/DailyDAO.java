@@ -309,4 +309,10 @@ public class DailyDAO {
 		sqlSession.update("dailyMapper.setFinisher", input);
 	}
 
+	/** 미완료 업무 FINISHER 등록 : 매일 자정 마다 batch 실행 */
+	public void setUnfinished() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+		String date = df.format(new Date());
+		sqlSession.update("dailyMapper.setUnfinished", date);
+	}
 }
