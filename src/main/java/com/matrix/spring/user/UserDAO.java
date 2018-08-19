@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class UserDAO {
@@ -189,6 +190,7 @@ public class UserDAO {
 	}// 차후에 슬라이드메뉴에서 프로필사진 변경 기능 추가할 경우 사용
 
 	/** 비밀번호 변경 */
+	@Transactional
 	public void setPw(String newPw, String userId, String pw) {
 		Map<String, String> input = new HashMap<>();
 		input.put("newPw", newPw);
@@ -261,6 +263,7 @@ public class UserDAO {
 	}
 
 	/** 관리자 or 직원 or 미인증자 여부 확인 */
+	@Transactional
 	public Map<String, String> getCertifiedInfo(String userId) {
 		Map<String, String> result = new HashMap<>();
 		if (!isUserId(userId)) {
