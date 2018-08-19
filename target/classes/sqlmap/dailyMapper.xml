@@ -73,7 +73,7 @@
 		where assign_date=TO_DATE(#{assignDate}, 'YYYY/MM/DD') and daily_task=#{dailyTask}
 		and admin_seq in (select admin_seq from admins where branch_seq = #{branchSeq})
 	</select>
-	<select id="getDailyTask" parameterType="java.util.Map" resultType="java.util.Map">
+	<select id="getDailyTask" parameterType="com.matrix.spring.task.daily.DailyDTO" resultType="java.util.Map">
 		select daily_task, assign_type, assign_detail 
 		from daily_tasks 
 		where assign_date=TO_DATE(#{assignDate}, 'YYYY/MM/DD') 
