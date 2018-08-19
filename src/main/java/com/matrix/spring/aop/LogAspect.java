@@ -2,7 +2,6 @@ package com.matrix.spring.aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 public class LogAspect {
+	/* 예외처리 하기
 	@Pointcut(value = "bean(*Controller)")
 	private void controllerPointcut() {}
 	
@@ -22,6 +22,15 @@ public class LogAspect {
 	public void exceptionWarn(JoinPoint joinPoint, Exception exception) {
 		log.warn("WARN! {} : '{}' [{}]", joinPoint.getSignature(), exception.getMessage(), exception.getStackTrace()[0]);
 	}
+	
+	@Around(value = "controllerPointcut()")
+	public void exceptionWarn(ProceedingJoinPoint joinPoint) {
+		try {
+			joinPoint.proceed();
+		} catch (Throwable exception) {
+			log.warn("WARN! {} : '{}' [{}]", joinPoint.getSignature(), exception.getMessage(), exception.getStackTrace()[0]);
+		}
+	}*/
 	
 	@Pointcut(value = "execution(* com.matrix.spring.user.UserController.login(*, *, *))")
 	private void loginPointcut() {}
