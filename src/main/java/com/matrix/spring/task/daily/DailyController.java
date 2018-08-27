@@ -71,31 +71,32 @@ public class DailyController {
 	}
 
 	@RequestMapping(value = "/admin/task/daily/assign", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> assignTask(DailyDTO dailyDTO, @SessionAttribute String adminSeq, @SessionAttribute String userId)
-			throws ParseException {
+	public @ResponseBody Map<String, String> assignTask(DailyDTO dailyDTO, @SessionAttribute String adminSeq,
+			@SessionAttribute String branchSeq, @SessionAttribute String userId) throws ParseException {
 		dailyDTO.setAdminSeq(adminSeq);
+		dailyDTO.setBranchSeq(branchSeq);
 		dailyService.addDailyTask(dailyDTO);
 		return responseConverter.getSucceed();
 	}
-	
+
 	@RequestMapping(value = "/admin/task/daily/remove", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> removeTask(DailyDTO dailyDTO, @SessionAttribute String branchSeq, @SessionAttribute String userId)
-			throws ParseException {
+	public @ResponseBody Map<String, String> removeTask(DailyDTO dailyDTO, @SessionAttribute String branchSeq,
+			@SessionAttribute String userId) throws ParseException {
 		dailyDTO.setBranchSeq(branchSeq);
 		dailyService.removeDailyTask(dailyDTO);
 		return responseConverter.getSucceed();
 	}
 
 	@RequestMapping(value = "/admin/task/daily/exist", method = RequestMethod.GET)
-	public @ResponseBody Map<String, String> isDailyTask(@RequestParam String dailyTask, @RequestParam String assignDate,
-			@SessionAttribute String branchSeq, Model model) {
+	public @ResponseBody Map<String, String> isDailyTask(@RequestParam String dailyTask,
+			@RequestParam String assignDate, @SessionAttribute String branchSeq, Model model) {
 		boolean result = dailyService.isDailyTask(dailyTask, assignDate, branchSeq);
 		return responseConverter.getBoolean(result);
 	}
-	
+
 	@Scheduled(cron = "0 0 0 * * *")
 	public void setUnfinished() {
 		dailyService.setUnfinished();
 	}
-	
+
 }

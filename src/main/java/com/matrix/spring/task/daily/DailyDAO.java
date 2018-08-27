@@ -6,11 +6,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,7 @@ import com.matrix.spring.task.manual.ManualDAO;
 @Repository
 public class DailyDAO {
 	@Autowired
-	private SqlSession sqlSession;
+	private DailyMapper dailyMapper;
 	@Autowired
 	private ManualDAO manualDAO;
 	@Autowired
@@ -42,10 +40,7 @@ public class DailyDAO {
 		if (new SimpleDateFormat("yyyy/MM/dd").parse(assignDate).after(tomorrow)) {
 			throw new RuntimeException("내일 이후는 조회 불가");
 		}
-		Map<String, String> input = new HashMap<>();
-		input.put("assignDate",	assignDate);
-		input.put("branchSeq", branchSeq);
-		List<String> list = sqlSession.selectList("dailyMapper.getAssignedParts", input);
+		List<String> list = dailyMapper.getAssignedParts(assignDate, branchSeq);
 		return list;
 	}
 
@@ -61,11 +56,7 @@ public class DailyDAO {
 		if (new SimpleDateFormat("yyyy/MM/dd").parse(assignDate).after(cal.getTime())) {
 			throw new RuntimeException("내일 이후 날짜는 조회 불가");
 		}
-		Map<String, String> input = new HashMap<>();
-		input.put("assignDate", assignDate);
-		input.put("assignDetail", assignDetail);
-		input.put("branchSeq", branchSeq);
-		List<Map<String, String>> list = sqlSession.selectList("dailyMapper.getDailyTasksForParts", input);
+		List<Map<String, String>> list = dailyMapper.getDailyTasksForParts(assignDate, assignDetail, branchSeq);
 		return list;
 	}
 
@@ -81,28 +72,24 @@ public class DailyDAO {
 		if (new SimpleDateFormat("yyyy/MM/dd").parse(assignDate).after(cal.getTime())) {
 			throw new RuntimeException("내일 이후 날짜는 조회 불가");
 		}
-		Map<String, String> input = new HashMap<>();
-		input.put("assignDate",	assignDate);
-		input.put("branchSeq", branchSeq);
-		list = sqlSession.selectList("dailyMapper.getDailyTasksForPerson", input);
+		list = dailyMapper.getDailyTasksForPerson(assignDate, branchSeq);
 		return list;
 	}
 
 	/** 업무 중복확인 */
 	public boolean isDailyTask(String dailyTask, String assignDate, String branchSeq) {
 		boolean result = false;
-		Map<String, String> input = new HashMap<>();
-		input.put("dailyTask", dailyTask);
-		input.put("assignDate", assignDate);
-		input.put("branchSeq", branchSeq);
-		if (sqlSession.selectOne("dailyMapper.isDailyTask", input) != null) {
+		if (dailyMapper.isDailyTask(assignDate, dailyTask, branchSeq) != null) {
 			result = true;
 		}
 		return result;
 	}
 
-	/** 업무 배정 
-	 * @throws ParseException */
+	/**
+	 * 업무 배정
+	 * 
+	 * @throws ParseException
+	 */
 	@Transactional
 	public void addDailyTask(DailyDTO dailyDTO) throws ParseException {
 		dailyDTO.setManualTaskSeq(manualDAO.getManualTaskSeq(dailyDTO.getDailyTask()));
@@ -121,12 +108,11 @@ public class DailyDAO {
 		if (formatCheck.getByteSize(dailyDTO.getDailyTask()) > 60) {
 			throw new RuntimeException("최대 한글 20자, 영어60자 입력 가능합니다.");
 		}
-		if (sqlSession.selectOne("dailyMapper.isAdminSeq", dailyDTO.getAdminSeq()) == null) {
+		if (dailyMapper.isAdminSeq(dailyDTO.getAdminSeq()) == null) {
 			throw new RuntimeException("없는 관리자 코드입니다.");
 		}
-		String branchSeq = sqlSession.selectOne("dailyMapper.getBranchSeq", dailyDTO.getAdminSeq());
 		if (dailyDTO.getAssignType().equals("파트")) {
-			Collection<String> workParts = staffDAO.getWorkParts(branchSeq); // 지점에 해당하는 파트 종류 호출
+			Collection<String> workParts = staffDAO.getWorkParts(dailyDTO.getBranchSeq()); // 지점에 해당하는 파트 종류 호출
 			boolean flag = false;
 			for (String tmp : workParts) {
 				if (tmp != null && tmp.equals(dailyDTO.getAssignDetail())) {
@@ -137,7 +123,7 @@ public class DailyDAO {
 				throw new RuntimeException("없는 파트입니다.");
 			}
 		} else if (dailyDTO.getAssignType().equals("개인")) {
-			Collection<Map<String, String>> workingStaffs = staffDAO.getWorkingStaffs(branchSeq); // 지점에 해당하는 재직중인 직원 호출
+			Collection<Map<String, String>> workingStaffs = staffDAO.getWorkingStaffs(dailyDTO.getBranchSeq());
 			boolean flag = false;
 			for (Map<String, String> map : workingStaffs) {
 				if (map.get("STAFF_ID").equals(dailyDTO.getAssignDetail())) {
@@ -159,19 +145,12 @@ public class DailyDAO {
 			throw new RuntimeException("과거에 업무배정을 할 수 없습니다.");
 		}
 
-		if (dailyDTO.getManualTaskSeq() == null) {
-			sqlSession.insert("dailyMapper.addDailyTaskByInput", dailyDTO);
-		} else {
-			sqlSession.insert("dailyMapper.addDailyTaskByManual", dailyDTO);
-		}
+		dailyMapper.addDailyTask(dailyDTO);
 	}
 
 	/** 특정 날짜에 배정된 업무 전체 출력 */
 	public List<String> getDailyTasks(String assignDate, String branchSeq) {
-		Map<String, String> input = new HashMap<>();
-		input.put("assignDate", assignDate);
-		input.put("branchSeq", branchSeq);
-		List<String> list = sqlSession.selectList("dailyMapper.getDailyTasks", input);
+		List<String> list = dailyMapper.getDailyTasks(assignDate, branchSeq);
 		return list;
 	}
 
@@ -183,7 +162,6 @@ public class DailyDAO {
 	@Transactional
 	public void setDailyTask(String newDailyTask, String oldDailyTask, String assignDate, String assignDetail,
 			String newImportance, String branchSeq) throws ParseException {
-		Map<String, String> input = new HashMap<>();
 		// 과거 업무 수정
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		Date today = new Date();
@@ -202,33 +180,20 @@ public class DailyDAO {
 		}
 		// 날짜에 해당하는 업무명의 assign_detail 비교
 		// SQL 추가 : 업무명, 배정날짜 입력 -> getAssignDetail
-		Map<String, String> map = new HashMap<>();
-		map.put("oldDailyTask", oldDailyTask);
-		map.put("assignDate", assignDate);
-		String str = sqlSession.selectOne("dailyMapper.getAssignDetail", map);
+		String str = dailyMapper.getAssignDetail(oldDailyTask, assignDate, branchSeq);
 		if (!str.equals(assignDetail)) {
 			throw new RuntimeException("바꾸려는 업무의 배정대상이 일치하지 않습니다.");
 		}
 
-		input.put("newDailyTask", newDailyTask);
-		input.put("assignDetail", assignDetail);
-		input.put("assignDate", assignDate);
-		input.put("oldDailyTask", oldDailyTask);
-		input.put("newImportance", newImportance);
-		input.put("branchSeq", branchSeq);
 		String newManualTaskSeq = manualDAO.getManualTaskSeq(newDailyTask);
-		if (newManualTaskSeq == null) {
-			sqlSession.update("dailyMapper.setDailyTaskByInput", input);
-		} else {
-			input.put("newManualTaskSeq", newManualTaskSeq);
-			sqlSession.update("dailyMapper.setDailyTaskByManual", input);
-		}
+		dailyMapper.setDailyTask(newDailyTask, newManualTaskSeq, newImportance, assignDate, assignDetail, oldDailyTask,
+				branchSeq);
 	}
 
 	/** 업무 한가지 검색 */
 	public Map<String, String> getDailyTask(DailyDTO dailyDTO) {
 		Map<String, String> result = null;
-		result = sqlSession.selectOne("dailyMapper.getDailyTask", dailyDTO);
+		result = dailyMapper.getDailyTask(dailyDTO);
 		if (result == null) {
 			throw new RuntimeException("선택된 업무가 존재하지 않습니다.");
 		}
@@ -239,7 +204,6 @@ public class DailyDAO {
 	@Transactional
 	public void setDailyAssign(String newAssignType, String newAssignDetail, String assignDate, String oldAssignType,
 			String oldAssignDetail, String dailyTask, String branchSeq) {
-		Map<String, String> input = new HashMap<>();
 		if (newAssignType == null || newAssignDetail == null) {
 			throw new RuntimeException("배정대상이 없습니다.");
 		}
@@ -271,18 +235,15 @@ public class DailyDAO {
 			throw new RuntimeException("없는 배정타입입니다.");
 		}
 
-		input.put("newAssignType", newAssignType);
-		input.put("newAssignDetail", newAssignDetail);
-		input.put("assignDate", assignDate);
-		input.put("oldAssignType", oldAssignType);
-		input.put("oldAssignDetail", oldAssignDetail);
-		input.put("dailyTask", dailyTask);
-		input.put("branchSeq", branchSeq);
-		sqlSession.update("dailyMapper.setDailyAssign", input);
+		dailyMapper.setDailyAssign(newAssignType, newAssignDetail, assignDate, oldAssignType, oldAssignDetail,
+				dailyTask, branchSeq);
 	}
 
-	/** 업무 삭제 
-	 * @throws ParseException */
+	/**
+	 * 업무 삭제
+	 * 
+	 * @throws ParseException
+	 */
 	@Transactional
 	public void removeDailyTask(DailyDTO dailyDTO) throws ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
@@ -295,24 +256,19 @@ public class DailyDAO {
 		if (getDailyTask(dailyDTO) == null) {
 			throw new RuntimeException("해당 날짜에 존재하지 않는 업무");
 		}
-		sqlSession.delete("dailyMapper.removeDailyTask", dailyDTO);
+		dailyMapper.removeDailyTask(dailyDTO);
 	}
 
 	/** 직원: 업무 완료 선택 */
-	public void setFinisher(String finisherId, String staffName, String assignDate, String branchSeq, String dailyTask) {
-		Map<String, String> input = new HashMap<>();
-		input.put("finisherId", finisherId);
-		input.put("staffName", staffName);
-		input.put("assignDate", assignDate);
-		input.put("branchSeq", branchSeq);
-		input.put("dailyTask", dailyTask);
-		sqlSession.update("dailyMapper.setFinisher", input);
+	public void setFinisher(String finisherId, String staffName, String assignDate, String branchSeq,
+			String dailyTask) {
+		dailyMapper.setFinisher(finisherId, staffName, assignDate, dailyTask, branchSeq);
 	}
 
 	/** 미완료 업무 FINISHER 등록 : 매일 자정 마다 batch 실행 */
 	public void setUnfinished() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		String date = df.format(new Date());
-		sqlSession.update("dailyMapper.setUnfinished", date);
+		dailyMapper.setUnfinished(date);
 	}
 }
