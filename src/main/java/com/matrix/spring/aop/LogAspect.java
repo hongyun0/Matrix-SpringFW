@@ -40,10 +40,10 @@ public class LogAspect {
 		log.info("INFO [{}] login.", userId);
 	}
 	
-	@Pointcut(value = "execution(* com.matrix.spring.task.daily.DailyController.assignTask(*, *, *))")
+	@Pointcut(value = "execution(* com.matrix.spring.task.daily.DailyController.assignTask(*, *, *, *))")
 	private void assignPointcut() {}
 	
-	@AfterReturning(pointcut = "assignPointcut() && args(dailyDTO, *, userId)")
+	@AfterReturning(pointcut = "assignPointcut() && args(dailyDTO, *, *, userId)")
 	public void assignInfo(JoinPoint joinPoint, DailyDTO dailyDTO, String userId) {
 		log.info("INFO [{}] assign '{}' to [{}].", userId, dailyDTO.getDailyTask(), dailyDTO.getAssignDetail());
 	}
