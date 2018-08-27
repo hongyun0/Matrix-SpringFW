@@ -1,5 +1,8 @@
 package com.matrix.spring.task.manual;
 
+import lombok.Data;
+
+@Data
 public class ManualDTO {
 	/**member data*/
 	private int manualTaskSeq;
@@ -24,87 +27,4 @@ public class ManualDTO {
 		setRepeatDetail(repeatDetail);
 	}
 
-	
-	/**get(), set()*/
-	public int getManualTaskSeq() {
-		return manualTaskSeq;
-	}
-
-	public String getManualTask() {
-		return manualTask;
-	}
-
-	public String getRepeatType() {
-		return repeatType;
-	}
-
-	public String getRepeatDetail() {
-		return repeatDetail;
-	}
-
-	public String getSpaceType() {
-		return spaceType;
-	}
-
-	public String getTaskType() {
-		return taskType;
-	}
-
-	private void setManualTaskSeq(int manualTaskSeq) {
-		this.manualTaskSeq = manualTaskSeq;
-	}
-
-	private void setManualTask(String manualTask) {
-		this.manualTask = manualTask;
-	}
-
-	private void setRepeatType(String repeatType) {
-		this.repeatType = repeatType;
-	}
-
-	private void setRepeatDetail(String repeatDetail) {
-		this.repeatDetail = repeatDetail;
-	}
-
-	private void setSpaceType(String spaceType) {
-		this.spaceType = spaceType;
-	}
-
-	private void setTaskType(String taskType) {
-		this.taskType = taskType;
-	}
-
-	/**toString()*/
-	@Override
-	public String toString() {
-		return "ManualVO [manualTaskSeq=" + manualTaskSeq + ", manualTask=" + manualTask + ", repeatType=" + repeatType
-				+ ", repeatDetail=" + repeatDetail + ", spaceType=" + spaceType + ", taskType=" + taskType + "]";
-	}
-
-	
-	/**equals()*/
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + manualTaskSeq;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ManualDTO other = (ManualDTO) obj;
-		if (manualTaskSeq != other.manualTaskSeq)
-			return false;
-		return true;
-	}
-	
-	
-	
 }
