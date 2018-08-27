@@ -1,6 +1,7 @@
 package com.matrix.spring;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -11,18 +12,27 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.matrix.spring.user.UserController;
 import com.matrix.spring.user.UserDAO;
 import com.matrix.spring.user.UserDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = {
-		"file:src/main/resources/application-config.xml",
 		"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml",
 		"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
 public class UserTest {
 	@Autowired
 	UserDAO userDAO;
+	@Autowired
+	UserController userController;
+	
+	@Test
+	public void loginWithCorrectInfo() {
+		String userId = "yunyoung";
+		String pw = "yunyoung1234";
+		assertTrue(userDAO.login(userId, pw));
+	}
 	
 	@Test
 	public void addUserWithNoProfilePhoto() {
