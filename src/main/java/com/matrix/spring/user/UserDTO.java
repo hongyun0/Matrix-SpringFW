@@ -36,7 +36,6 @@ public class UserDTO {
 		setAddressCity(addressCity);
 		setAddressGu(addressGu);
 		setAddressDong(addressDong);
-		setProfilePhoto(null);
 	}
 	
 	/**회원정보 변경용*/
