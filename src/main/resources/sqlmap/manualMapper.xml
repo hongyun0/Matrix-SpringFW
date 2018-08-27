@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="manualMapper">
+<mapper namespace="com.matrix.spring.task.manual.ManualMapper">
 	<select id="getPeriodicManualTasks" resultType="java.util.Map">
 		select m.MANUAL_TASK_SEQ, m.MANUAL_TASK, m.REPEAT_DETAIL, s.SPACE_TYPE 
 		from manual_tasks m, space_types s 
@@ -24,21 +24,38 @@
 		and m.MANUAL_TASK like #{inputText}
 	</select>
 	<select id="getSpaceTypes" resultType="String">
-		select space_type from space_types
+		select space_type 
+		from space_types
 	</select>
 	<select id="getTaskTypesBySpaceType" resultType="String" parameterType="String">
-		select distinct task_type from manual_tasks m, space_types s, task_types t where m.space_type_seq = s.space_type_seq and m.task_type_seq = t.task_type_seq and s.space_type=#{spaceType}
+		select distinct task_type 
+		from manual_tasks m, space_types s, task_types t 
+		where m.space_type_seq = s.space_type_seq 
+		and m.task_type_seq = t.task_type_seq 
+		and s.space_type=#{spaceType}
 	</select> 
 	<select id="getTaskTypes" resultType="String">
-		select task_type from task_types
+		select task_type 
+		from task_types
 	</select>
 	<select id="getSpaceTypesByTaskType" resultType="String" parameterType="String">
-		select distinct space_type from manual_tasks m, space_types s, task_types t where m.space_type_seq = s.space_type_seq and m.task_type_seq = t.task_type_seq and t.task_type=#{taskType}
+		select distinct space_type 
+		from manual_tasks m, space_types s, task_types t 
+		where m.space_type_seq = s.space_type_seq 
+		and m.task_type_seq = t.task_type_seq 
+		and t.task_type=#{taskType}
 	</select>
-	<select id="getTasks" resultType="java.util.Map" parameterType="java.util.Map">
-		select manual_task, repeat_type, repeat_detail from manual_tasks m, space_types s, task_types t where m.space_type_seq = s.space_type_seq and m.task_type_seq = t.task_type_seq and s.space_type=#{spaceType} and t.task_type=#{taskType}
+	<select id="getTasks" resultType="java.util.Map">
+		select manual_task, repeat_type, repeat_detail 
+		from manual_tasks m, space_types s, task_types t 
+		where m.space_type_seq = s.space_type_seq 
+		and m.task_type_seq = t.task_type_seq 
+		and s.space_type=#{spaceType} 
+		and t.task_type=#{taskType}
 	</select>
 	<select id="getManualTaskSeq" resultType="String" parameterType="String">
-		select manual_task_seq from manual_tasks where manual_task=#{searchTask}
+		select manual_task_seq 
+		from manual_tasks 
+		where manual_task=#{searchTask}
 	</select>
 </mapper>

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,19 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class ManualDAO {
 	@Autowired
-	private SqlSession sqlSession;
+	private ManualMapper manualMapper;
 
 	/** 추천업무 출력 : 업무배정, 업무수정 */
 	@Transactional
 	public List<Map<String, String>> getRecommendedTasks(String date, String branchSeq) {
-		List<Map<String, String>> tasks = sqlSession.selectList("manualMapper.getPeriodicManualTasks");
+		List<Map<String, String>> tasks = manualMapper.getPeriodicManualTasks();
 		List<Map<String, String>> output = new ArrayList<>();
 		for (Map<String, String> task : tasks) {
 			Map<String, String> input = new HashMap<>();
 			input.putAll(task);
 			input.put("date", date);
 			input.put("branchSeq", branchSeq);
-			if ((int)sqlSession.selectOne("manualMapper.isRecommendedTask", input) == 0) {
+			if (manualMapper.isRecommendedTask(input) == 0) {
 				output.add(task);
 			}
 		}
@@ -42,16 +41,12 @@ public class ManualDAO {
 		for (String i : inputs) {
 			inputText += i + "%";
 		}
-		List<Map<String, String>> list = null;
-		list = sqlSession.selectList("manualMapper.searchManualTasks", inputText);
-		return list;
+		return manualMapper.searchManualTasks(inputText);
 	}
 
 	/** (대분류)공간분류 보기: 업무배정, 업무수정, 매뉴얼 보기 */
 	public List<String> getSpaceTypes() {
-		List<String> list = null;
-		list = sqlSession.selectList("manualMapper.getSpaceTypes");
-		return list;
+		return manualMapper.getSpaceTypes();
 	}
 
 	/** (중분류)선택한 공간에 속한 업무분류 보기: 업무배정, 업무수정, 매뉴얼 보기 */
@@ -59,16 +54,12 @@ public class ManualDAO {
 		if (spaceType == null) {
 			return null;
 		}
-		List<String> list = null;
-		list = sqlSession.selectList("manualMapper.getTaskTypesBySpaceType", spaceType);
-		return list;
+		return manualMapper.getTaskTypesBySpaceType(spaceType);
 	}
 
 	/** (대분류)업무분류 보기: 매뉴얼 보기 */
 	public List<String> getTaskTypes() {
-		List<String> list = null;
-		list = sqlSession.selectList("manualMapper.getTaskTypes");
-		return list;
+		return manualMapper.getTaskTypes();
 	}
 
 	/** (중분류)선택한 업무에 속한 공간분류 보기: 매뉴얼 보기 */
@@ -76,26 +67,17 @@ public class ManualDAO {
 		if (taskType == null) {
 			return null;
 		}
-		List<String> list = null;
-		list = sqlSession.selectList("manualMapper.getSpaceTypesByTaskType", taskType);
-		return list;
+		return manualMapper.getSpaceTypesByTaskType(taskType);
 	}
 
 	/** (공통 소분류)선택한 공간/업무분류에 속한 업무 목록 보기: 업무배정, 업무수정, 매뉴얼 보기 */
 	public List<Map<String, String>> getManualTasks(String spaceType, String taskType) {
-		List<Map<String, String>> list = null;
-		Map<String, String> input = new HashMap<>();
-		input.put("spaceType", spaceType);
-		input.put("taskType", taskType);
-		list = sqlSession.selectList("manualMapper.getTasks", input);
-		return list;
+		return manualMapper.getTasks(spaceType, taskType);
 	}
 
 	/** i: 업무명, o: ManualTaskSeq */
 	public String getManualTaskSeq(String searchTask) {
-		String manualTaskSeq = null;
-		manualTaskSeq = sqlSession.selectOne("manualMapper.getManualTaskSeq", searchTask);
-		return manualTaskSeq;
+		return manualMapper.getManualTaskSeq(searchTask);
 	}
 
 }
