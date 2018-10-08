@@ -34,7 +34,7 @@ public class UserTest {
 		assertTrue(userDAO.login(userId, pw));
 	}
 	
-	@Test
+	//@Test
 	public void addUserWithNoProfilePhoto() {
 		String userId = "testtest";
 		String pw = "test1234";
